@@ -1,7 +1,7 @@
 int g_NumIterations = 12;
-float g_LayerBaseRadii = 50.0f;
-float g_LayerRadiiMultiplier = 1.39f;
-int g_NumLayers = 4;
+float g_LayerBaseRadii = 40.0f;
+float g_LayerRadiiMultiplier = 1.10f;
+int g_NumLayers = 6;
 int g_BackgroungAlpha = 20;
 
 ArrayList<Layer> g_Layers;
