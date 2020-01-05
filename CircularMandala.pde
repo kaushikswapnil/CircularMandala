@@ -1,6 +1,6 @@
 int g_NumIterations = 12;
-float g_LayerBaseRadii = 45.0f;
-float g_LayerRadiiMultiplier = 1.35f;
+float g_LayerBaseRadii = 50.0f;
+float g_LayerRadiiMultiplier = 1.39f;
 int g_NumLayers = 4;
 int g_BackgroungAlpha = 20;
 
@@ -21,7 +21,7 @@ PVector[] g_LayerColors = {new PVector(255, 200, 0)
 
 void setup()
 {
-  size(800, 800);
+  size(1000, 1000);
   
   GenerateLayers();
   
