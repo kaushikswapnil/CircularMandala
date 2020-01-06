@@ -5,6 +5,7 @@ class Layer
    int m_NumLoops;
    float m_Angle;
    float m_AngleBetweenLoops;
+   PVector m_Center;
    
    ArrayList<IEffect> m_Effects;
    
@@ -15,6 +16,7 @@ class Layer
      m_StrokeColor = new PVector(0, 0, 0);
      m_Angle = 0.0f;
      m_AngleBetweenLoops = TWO_PI/m_NumLoops;
+     m_Center = CENTERVECTOR.copy();
      
      m_Effects = new ArrayList<IEffect>();
    }
@@ -49,7 +51,8 @@ class Layer
    void Display()
    {
      pushMatrix();
-     
+
+     translate(m_Center.x, m_Center.y);
      rotate(m_Angle);
      
      PVector flatPerimeterCircle = new PVector(0, m_Radius);
@@ -62,8 +65,9 @@ class Layer
      {
        pushMatrix();
        
-       rotate(curAngle);
-       ellipse(flatPerimeterCircle.x, flatPerimeterCircle.y, diameter, diameter);
+       PVector curPerimeterCircleCenter = flatPerimeterCircle.copy();
+       curPerimeterCircleCenter.rotate(curAngle);
+       ellipse(curPerimeterCircleCenter.x, curPerimeterCircleCenter.y, diameter, diameter);
        
        popMatrix();
        

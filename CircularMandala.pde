@@ -3,6 +3,9 @@ float g_LayerBaseRadii = 40.0f;
 float g_LayerRadiiMultiplier = 1.10f;
 int g_NumLayers = 6;
 int g_BackgroungAlpha = 20;
+float g_InitialAngleBetweenLoops = PI;
+PVector NULLVECTOR = new PVector(0, 0, 0);
+PVector CENTERVECTOR;
 
 ArrayList<Layer> g_Layers;
 
@@ -22,6 +25,8 @@ PVector[] g_LayerColors = {new PVector(255, 200, 0)
 void setup()
 {
   size(1000, 1000);
+  
+  CENTERVECTOR = new PVector(width/2, height/2);
   
   GenerateLayers();
   
@@ -61,6 +66,7 @@ void GradualGrowMode()
      float layerRadius = g_LayerBaseRadii + (g_LayerBaseRadii*layerIter);
      Layer layer = g_Layers.get(layerIter);
      layer.m_Effects.add(new GradualGrowEffect(100, layerRadius));
+     //layer.m_Effects.add(new RecedingCenteredEffect(180, 2.0f/3));
    }
    
    g_EffectMode = 1;
@@ -117,11 +123,10 @@ void RotationEffectMode()
 void PerformLayerFrame()
 {
   pushMatrix();
-  translate(width/2, height/2);
   
   rectMode(CENTER);
   fill(0, 0, 0, g_BackgroungAlpha);
-  rect(0, 0, width+10, height+10);
+  rect(CENTERVECTOR.x, CENTERVECTOR.y, width+10, height+10);
 
   noFill();
   
@@ -159,6 +164,6 @@ void GenerateLayers()
   {
     float layerRadius = 0.0f;//g_LayerBaseRadii + (g_LayerBaseRadii*layerIter);
     g_Layers.add(new Layer(layerRadius, g_NumIterations, g_LayerColors[layerIter]));
-    g_Layers.get(layerIter).m_AngleBetweenLoops = PI;
+    g_Layers.get(layerIter).m_AngleBetweenLoops = g_InitialAngleBetweenLoops;
   }
 }

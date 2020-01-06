@@ -80,6 +80,23 @@ class UnfurlFromCloseEffect extends IEffect
   }
 }
 
+class RecedingCenteredEffect extends IEffect
+{
+  float m_RecedingStartRatio;
+  RecedingCenteredEffect(int frameDuration, float recedingFrameRatio)
+  {
+    super(frameDuration); 
+    m_RecedingStartRatio = recedingFrameRatio;
+  }
+  
+  void ApplyInternal(Layer layer)
+  {
+    float completionRatio = GetCompletionRatio();
+        
+    layer.m_Center = PVector.add(CENTERVECTOR, PVector.mult(new PVector(0, -layer.m_Radius), 1.0f-completionRatio));
+  }
+}
+
 class GradualGrowEffect extends IEffect
 {
   float m_FinalRadius;
