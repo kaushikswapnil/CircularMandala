@@ -9,6 +9,8 @@ PVector NULLVECTOR = new PVector(0, 0, 0);
 PVector CENTERVECTOR;
 int g_RotationEffectModeStartFrame = -1;
 int g_RotationEffectModeMinFrameCount = 100;
+int g_StaticTimeStartFrame = -1;
+int g_StaticTimeFrameCount = 20;
 
 ArrayList<Layer> g_Layers;
 
@@ -55,6 +57,18 @@ void draw()
      break;
      
      case 5:
+     if (g_StaticTimeStartFrame == -1)
+     {
+         g_StaticTimeStartFrame = frameCount;
+     }
+     else if (g_StaticTimeStartFrame + g_StaticTimeFrameCount < frameCount)
+     {
+         g_EffectMode = 6;
+     }
+     PerformLayerFrame();
+     break;
+     
+     case 6:
      FurlEffectMode();
      break;
      
@@ -143,15 +157,15 @@ void RotationEffectMode()
 
 void FurlEffectMode()
 {
-  if (g_EffectMode == 5)
+  if (g_EffectMode == 6)
   {
     for (Layer layer : g_Layers) //<>//
     {
        layer.m_Effects.add(new ChangeAngleBetweenLoopEffect(100, -layer.m_AngleBetweenLoops));
-       layer.m_Effects.add(new RotateEffect(300, -layer.m_Angle));
+       layer.m_Effects.add(new RotateEffect(200, -layer.m_Angle));
     }
     
-    g_EffectMode = 6;
+    g_EffectMode = 7;
   }
   
   PerformLayerFrame();
