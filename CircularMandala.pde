@@ -148,7 +148,7 @@ void FurlEffectMode()
     for (Layer layer : g_Layers) //<>//
     {
        layer.m_Effects.add(new ChangeAngleBetweenLoopEffect(100, -layer.m_AngleBetweenLoops));
-       layer.m_Effects.add(new RotateEffect(150, -layer.m_Angle));
+       layer.m_Effects.add(new RotateEffect(300, -layer.m_Angle));
     }
     
     g_EffectMode = 6;
@@ -167,7 +167,7 @@ void PerformLayerFrame()
 
   noFill();
   
-  strokeWeight(3.5f);
+  strokeWeight(4.5f);
   
   for (Layer layer : g_Layers)
   {
