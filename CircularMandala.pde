@@ -1,12 +1,14 @@
 int g_NumIterations = 12;
 float g_LayerBaseRadii = 40.0f;
 float g_LayerRadiiMultiplier = 1.10f;
-int g_NumLayers = 6;
+int g_NumLayers = 5;
 int g_BackgroungAlpha = 20;
 float g_InitialAngleBetweenLoops = PI;
 int g_GeneralLayerShapeMode = 0;
 PVector NULLVECTOR = new PVector(0, 0, 0);
 PVector CENTERVECTOR;
+int g_RotationEffectModeStartFrame = -1;
+int g_RotationEffectModeMinFrameCount = 100;
 
 ArrayList<Layer> g_Layers;
 
@@ -50,6 +52,10 @@ void draw()
      
      case 4:
      RotationEffectMode();
+     break;
+     
+     case 5:
+     FurlEffectMode();
      break;
      
      default:
@@ -108,14 +114,43 @@ void UnfurlEffectMode()
 
 void RotationEffectMode()
 {
-  for (Layer layer : g_Layers)
+  if (g_RotationEffectModeStartFrame == -1)
   {
-     if (layer.m_Effects.size() == 0)
-     {
-       int rotationFrameDur = 350 + (int)random(200, 600);
-       float rotationAngleAmount = TWO_PI * ((random(-2, 2)*0.5f)+1);
-       layer.m_Effects.add(new InertialRotateEffect(rotationFrameDur, rotationAngleAmount, 0.3f, 0.1f, 2));
-     }
+    g_RotationEffectModeStartFrame = frameCount;
+  }
+  else if ((g_RotationEffectModeStartFrame + g_RotationEffectModeMinFrameCount) > frameCount)
+  {
+    for (Layer layer : g_Layers)
+    {
+       if (layer.m_Effects.size() == 0)
+       {
+         int rotationFrameDur = 350 + (int)random(200, 600);
+         float rotationAngleAmount = TWO_PI * ((random(-2, 2)*0.5f)+1);
+         layer.m_Effects.add(new InertialRotateEffect(rotationFrameDur, rotationAngleAmount, 0.3f, 0.1f, 2));
+       }
+    }
+  }
+  else
+  {
+    if (!AnyLayerHasEffect())
+    {
+       g_EffectMode = 5; 
+    }
+  }  
+  
+  PerformLayerFrame();
+}
+
+void FurlEffectMode()
+{
+  if (g_EffectMode == 5)
+  {
+    for (Layer layer : g_Layers)
+    {
+       layer.m_Effects.add(new FurlToInitialEffect(100)); 
+    }
+    
+    g_EffectMode = 6;
   }
   
   PerformLayerFrame();

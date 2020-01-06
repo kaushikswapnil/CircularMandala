@@ -57,13 +57,14 @@ class IEffect
   }
 }
 
-class UnfurlFromCloseEffect extends IEffect
+class ChangeAngleBetweenLoopEffect extends IEffect
 {
+  float m_AngleChange;
   float m_InitialAngle;
-  
-  UnfurlFromCloseEffect(int frameDuration)
+  ChangeAngleBetweenLoopEffect(int frameDuration, float angleChange)
   {
     super(frameDuration);
+    m_AngleChange = angleChange;
     m_InitialAngle = -10000;
   }
   
@@ -75,8 +76,39 @@ class UnfurlFromCloseEffect extends IEffect
     }
     
     float completionRatio = GetCompletionRatio();
-    float unfurlAngle = map(completionRatio, 0.0f, 1.0f, m_InitialAngle, layer.GetIdealAngleBetweenLoops());
+    float unfurlAngle = map(completionRatio, 0.0f, 1.0f, m_InitialAngle, GetFinalAngle(layer));
     layer.m_AngleBetweenLoops = unfurlAngle;
+  }
+  
+  float GetFinalAngle(Layer layer)
+  {
+    return m_InitialAngle + m_AngleChange; 
+  }
+}
+
+class UnfurlFromCloseEffect extends ChangeAngleBetweenLoopEffect
+{
+  UnfurlFromCloseEffect(int frameDuration)
+  {
+    super(frameDuration, 0.0f);
+  }
+  
+  float GetFinalAngle(Layer layer)
+  {
+    return layer.GetIdealAngleBetweenLoops(); 
+  }
+}
+
+class FurlToInitialEffect extends ChangeAngleBetweenLoopEffect
+{
+  FurlToInitialEffect(int frameDuration)
+  {
+    super(frameDuration, 0.0f);
+  }
+  
+  float GetFinalAngle(Layer layer)
+  {
+    return g_InitialAngleBetweenLoops; 
   }
 }
 
@@ -116,10 +148,10 @@ class GradualGrowEffect extends IEffect
         m_InitialRadius = layer.m_Radius;
     }
     
-    float completionRatio = GetCompletionRatio(); //<>//
-    float radius = map(completionRatio, 0.0f, 1.0f, m_InitialRadius, m_FinalRadius); //<>//
+    float completionRatio = GetCompletionRatio();
+    float radius = map(completionRatio, 0.0f, 1.0f, m_InitialRadius, m_FinalRadius);
     
-    layer.m_Radius = radius; //<>//
+    layer.m_Radius = radius;
   }
 }
 
