@@ -4,6 +4,7 @@ float g_LayerRadiiMultiplier = 1.10f;
 int g_NumLayers = 6;
 int g_BackgroungAlpha = 20;
 float g_InitialAngleBetweenLoops = PI;
+int g_GeneralLayerShapeMode = 0;
 PVector NULLVECTOR = new PVector(0, 0, 0);
 PVector CENTERVECTOR;
 
@@ -165,5 +166,6 @@ void GenerateLayers()
     float layerRadius = 0.0f;//g_LayerBaseRadii + (g_LayerBaseRadii*layerIter);
     g_Layers.add(new Layer(layerRadius, g_NumIterations, g_LayerColors[layerIter]));
     g_Layers.get(layerIter).m_AngleBetweenLoops = g_InitialAngleBetweenLoops;
+    g_Layers.get(layerIter).m_ShapeMode = (int)(random(0,2));//g_GeneralLayerShapeMode;
   }
 }

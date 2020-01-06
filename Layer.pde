@@ -6,6 +6,7 @@ class Layer
    float m_Angle;
    float m_AngleBetweenLoops;
    PVector m_Center;
+   int m_ShapeMode;
    
    ArrayList<IEffect> m_Effects;
    
@@ -17,6 +18,7 @@ class Layer
      m_Angle = 0.0f;
      m_AngleBetweenLoops = TWO_PI/m_NumLoops;
      m_Center = CENTERVECTOR.copy();
+     m_ShapeMode = 0;
      
      m_Effects = new ArrayList<IEffect>();
    }
@@ -67,7 +69,17 @@ class Layer
        
        PVector curPerimeterCircleCenter = flatPerimeterCircle.copy();
        curPerimeterCircleCenter.rotate(curAngle);
-       ellipse(curPerimeterCircleCenter.x, curPerimeterCircleCenter.y, diameter, diameter);
+       
+       if (m_ShapeMode == 0)
+       {
+        ellipse(curPerimeterCircleCenter.x, curPerimeterCircleCenter.y, diameter, diameter); 
+       }
+       else//m_ShapeMode == 1
+       {
+        rectMode(CENTER);
+        rotate(PI/4);
+        rect(curPerimeterCircleCenter.x, curPerimeterCircleCenter.y, diameter, diameter);
+       }
        
        popMatrix();
        
