@@ -1,6 +1,6 @@
-int g_NumIterations = 12;
-float g_LayerBaseRadii = 40.0f;
-float g_LayerRadiiMultiplier = 1.08f;
+int g_NumIterations = 6;
+float g_LayerBaseRadii = 45.0f;
+float g_LayerRadiiMultiplier = 1.01f;
 int g_NumLayers = 6;
 int g_BackgroungAlpha = 20;
 float g_InitialAngleBetweenLoops = PI;
@@ -10,7 +10,7 @@ PVector CENTERVECTOR;
 int g_RotationEffectModeStartFrame = -1;
 int g_RotationEffectModeMinFrameCount = 100;
 int g_StaticTimeStartFrame = -1;
-int g_StaticTimeFrameCount = 20;
+int g_StaticTimeFrameCount = 10;
 
 ArrayList<Layer> g_Layers;
 
@@ -84,7 +84,7 @@ void GradualGrowMode()
  {
    for (int layerIter = 0; layerIter < g_Layers.size(); ++layerIter)
    {
-     float layerRadius = g_LayerBaseRadii + (g_LayerBaseRadii*layerIter);
+     float layerRadius = g_LayerBaseRadii + (g_LayerBaseRadii*layerIter*g_LayerRadiiMultiplier);
      Layer layer = g_Layers.get(layerIter);
      layer.m_Effects.add(new GradualGrowEffect(100, layerRadius));
      //layer.m_Effects.add(new RecedingCenteredEffect(180, 2.0f/3));
@@ -97,6 +97,7 @@ void GradualGrowMode()
    if (!AnyLayerHasEffect())
    {
      g_EffectMode = 2;
+     //g_EffectMode = 4;
    }
  }
  
@@ -139,7 +140,10 @@ void RotationEffectMode()
        if (layer.m_Effects.size() == 0)
        {
          int rotationFrameDur = 350 + (int)random(200, 600);
-         float rotationAngleAmount = TWO_PI * ((random(-2, 2)*0.5f)+1);
+         float rotationSign = (random(0,1) <= 0.5f ? 1.0f : -1.0f);
+         float rotationAngleAmount = TWO_PI * ((random(0, 4) * 0.5f)+1.0f) * rotationSign;
+         //int rotationFrameDur = 400;
+         //float rotationAngleAmount = TWO_PI;
          layer.m_Effects.add(new InertialRotateEffect(rotationFrameDur, rotationAngleAmount, 0.3f, 0.1f, 2));
        }
     }
@@ -149,6 +153,7 @@ void RotationEffectMode()
     if (!AnyLayerHasEffect())
     {
        g_EffectMode = 5; 
+       //g_RotationEffectModeStartFrame = frameCount;
     }
   }  
   
@@ -159,7 +164,7 @@ void FurlEffectMode()
 {
   if (g_EffectMode == 6)
   {
-    for (Layer layer : g_Layers) //<>//
+    for (Layer layer : g_Layers)
     {
        layer.m_Effects.add(new ChangeAngleBetweenLoopEffect(100, -layer.m_AngleBetweenLoops));
        layer.m_Effects.add(new RotateEffect(200, -layer.m_Angle));
@@ -214,7 +219,7 @@ void GenerateLayers()
   for (int layerIter = 0; layerIter < g_NumLayers; ++layerIter)
   {
     float layerRadius = 0.0f;//g_LayerBaseRadii + (g_LayerBaseRadii*layerIter);
-    g_Layers.add(new Layer(layerRadius, g_NumIterations, g_LayerColors[layerIter]));
+    g_Layers.add(new Layer(layerRadius, g_NumIterations, g_LayerColors[layerIter%g_LayerColors.length]));
     g_Layers.get(layerIter).m_AngleBetweenLoops = g_InitialAngleBetweenLoops;
     g_Layers.get(layerIter).m_ShapeMode = (int)(random(0,2));//g_GeneralLayerShapeMode;
   }

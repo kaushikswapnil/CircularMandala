@@ -202,85 +202,99 @@ class InertialRotateEffect extends RotateEffect
     {
         m_InitialAngle = layer.m_Angle;
     }
+
+    layer.m_Angle += GetFrameSpeed();
+  }
+  
+  float GetFrameSpeed()
+  {    
+    float maximumFrameSpeed = GetMaximumFrameSpeed();
     
+    if (IsInMaximumSpeedRange())
+    {
+       return maximumFrameSpeed;
+    }
+    else
+    {
+       float completionRatio = GetCompletionRatio();
+       
+       float effectiveSpeed = 0.0f;
+       
+       if (IsInertialInStart() && completionRatio < m_InertialFrameRatio)
+       {
+         effectiveSpeed = map(completionRatio, 0.0f, m_InertialFrameRatio, 0.0f, maximumFrameSpeed);
+       }
+       else if (IsInertialInEnd() && completionRatio > (1.0f- m_InertialFrameRatio))
+       {
+         effectiveSpeed = map(completionRatio, (1.0f- m_InertialFrameRatio), 1.0f, maximumFrameSpeed, 0.0f);
+       }
+       
+       return effectiveSpeed; 
+    }
+  }
+  
+  boolean IsInMaximumSpeedRange()
+  {
     float completionRatio = GetCompletionRatio();
-    float baseAngle = 0.0f;
     
-    if (m_InertialMode == 0)
+    boolean isInMaximumSpeedRange = false;
+    
+    if (IsInertialInStart())
     {
-      if (completionRatio <= m_InertialFrameRatio)
-      {
-        float maxAngle = m_InitialAngle + (m_InertialAngleRatio * m_RotationAngle);
-        float effectiveCompletionRatio = completionRatio/m_InertialFrameRatio;
-        float effectiveAngle = map(effectiveCompletionRatio, 0.0f, 1.0f, m_InitialAngle, maxAngle);
-        
-        baseAngle = effectiveAngle;
-      }
-      else
-      {
-        float maxAngle = m_InitialAngle + m_RotationAngle;
-        float minAngle = m_InitialAngle + (m_InertialAngleRatio * m_RotationAngle);
-        
-        float effectiveCompletionRatio = (completionRatio-m_InertialFrameRatio)/(1.0f-m_InertialFrameRatio);
-        float effectiveAngle = map(effectiveCompletionRatio, 0.0f, 1.0f, minAngle, maxAngle);
-        
-        baseAngle = effectiveAngle;
-      }
-    }
-    else if (m_InertialMode == 1)
-    {
-      if ((1.0f-completionRatio) <= m_InertialFrameRatio)
-      {
-        float maxAngle = m_InitialAngle + m_RotationAngle;
-        float minAngle = m_InitialAngle + ((1.0f-m_InertialAngleRatio)*m_RotationAngle);
-        float effectiveCompletionRatio = (1.0f-completionRatio)/m_InertialFrameRatio;
-        float effectiveAngle = map(effectiveCompletionRatio, 0.0f, 1.0f, minAngle, maxAngle);
-        
-        baseAngle = effectiveAngle;
-      }
-      else
-      {
-        float maxAngle = m_InitialAngle + ((1.0f-m_InertialAngleRatio)*m_RotationAngle);
-        float minAngle = m_InitialAngle;
-        
-        float effectiveCompletionRatio = (completionRatio)/(1.0f-m_InertialFrameRatio);
-        float effectiveAngle = map(effectiveCompletionRatio, 0.0f, 1.0f, minAngle, maxAngle);
-        
-        baseAngle = effectiveAngle;
-      }
-    }
-    else if (m_InertialMode == 2)
-    {
-      if (completionRatio <= m_InertialFrameRatio)
-      {
-        float maxAngle = m_InitialAngle + (m_InertialAngleRatio * m_RotationAngle);
-        float effectiveCompletionRatio = completionRatio/m_InertialFrameRatio;
-        float effectiveAngle = map(effectiveCompletionRatio, 0.0f, 1.0f, m_InitialAngle, maxAngle);
-        
-        baseAngle = effectiveAngle;
-      }
-      else if ((1.0f-completionRatio) <= m_InertialFrameRatio)
-      {
-        float maxAngle = m_InitialAngle + m_RotationAngle;
-        float minAngle = m_InitialAngle + ((1.0f-m_InertialAngleRatio)*m_RotationAngle);
-        float effectiveCompletionRatio = (1.0f-completionRatio)/m_InertialFrameRatio;
-        float effectiveAngle = map(effectiveCompletionRatio, 0.0f, 1.0f, minAngle, maxAngle);
-        
-        baseAngle = effectiveAngle;
-      }
-      else
-      {
-        float maxAngle = m_InitialAngle + ((1.0f-m_InertialAngleRatio)*m_RotationAngle);
-        float minAngle = m_InitialAngle + (m_InertialAngleRatio * m_RotationAngle);
-        
-        float effectiveCompletionRatio = (completionRatio)/(1.0f-m_InertialFrameRatio);
-        float effectiveAngle = map(effectiveCompletionRatio, 0.0f, 1.0f, minAngle, maxAngle);
-        
-        baseAngle = effectiveAngle;
-      }
+      isInMaximumSpeedRange |= (completionRatio < m_InertialFrameRatio); 
     }
     
-    float finalAngle = baseAngle%TWO_PI;
-    layer.m_Angle = finalAngle;
+    if (IsInertialInEnd())
+    {
+      isInMaximumSpeedRange |= (completionRatio > (1.0f - m_InertialFrameRatio)); 
+    }
+    
+    return isInMaximumSpeedRange;
+  }
+  
+  float GetMaximumFrameSpeed()
+  {
+    float angleTraversedInFullSpeed = GetAngleTraversedInFullSpeed();
+    
+    int inertialRatioMultiplier = 1;
+    
+    if (IsInertialInStart() && IsInertialInEnd())
+    {
+      inertialRatioMultiplier = 2;
+    }
+    
+    float maximumFrameSpeed = angleTraversedInFullSpeed / (m_FrameCount * (1.0f - (inertialRatioMultiplier*m_InertialFrameRatio)));
+    return maximumFrameSpeed;
+  }
+  
+  float GetAngleTraversedInFullSpeed()
+  {
+    boolean isInertialInStart = IsInertialInStart();
+    boolean isInertialInEnd = IsInertialInEnd();
+    
+    float angleTraversedInFullSpeed = m_RotationAngle;
+    
+    if (isInertialInStart && isInertialInEnd)
+    {
+      angleTraversedInFullSpeed *= (1.0f - (2*m_InertialFrameRatio));
+    }
+    else
+    {
+      angleTraversedInFullSpeed *= (1.0f - (m_InertialFrameRatio));
+    }
+    
+    return angleTraversedInFullSpeed;
+  }
+  
+  boolean IsInertialInStart()
+  {
+    boolean isInertialInStart = m_InertialMode == 0 || m_InertialMode == 2;
+    return isInertialInStart;
+  }
+  
+  boolean IsInertialInEnd()
+  {
+    boolean isInertialInEnd = m_InertialMode == 1 || m_InertialMode == 2;
+    return isInertialInEnd;
   }
 }
