@@ -99,16 +99,16 @@ class UnfurlFromCloseEffect extends ChangeAngleBetweenLoopEffect
   }
 }
 
-class FurlToInitialEffect extends ChangeAngleBetweenLoopEffect
+class FurlToCloseEffect extends ChangeAngleBetweenLoopEffect
 {
-  FurlToInitialEffect(int frameDuration)
+  FurlToCloseEffect(int frameDuration)
   {
     super(frameDuration, 0.0f);
   }
   
   float GetFinalAngle(Layer layer)
   {
-    return g_InitialAngleBetweenLoops; 
+    return 0.0f; 
   }
 }
 

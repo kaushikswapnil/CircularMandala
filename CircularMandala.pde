@@ -1,7 +1,7 @@
 int g_NumIterations = 12;
 float g_LayerBaseRadii = 40.0f;
-float g_LayerRadiiMultiplier = 1.10f;
-int g_NumLayers = 5;
+float g_LayerRadiiMultiplier = 1.08f;
+int g_NumLayers = 6;
 int g_BackgroungAlpha = 20;
 float g_InitialAngleBetweenLoops = PI;
 int g_GeneralLayerShapeMode = 0;
@@ -145,9 +145,10 @@ void FurlEffectMode()
 {
   if (g_EffectMode == 5)
   {
-    for (Layer layer : g_Layers)
+    for (Layer layer : g_Layers) //<>//
     {
-       layer.m_Effects.add(new FurlToInitialEffect(100)); 
+       layer.m_Effects.add(new ChangeAngleBetweenLoopEffect(100, -layer.m_AngleBetweenLoops));
+       layer.m_Effects.add(new RotateEffect(150, -layer.m_Angle));
     }
     
     g_EffectMode = 6;

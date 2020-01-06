@@ -77,8 +77,11 @@ class Layer
        else//m_ShapeMode == 1
        {
         rectMode(CENTER);
+        translate(curPerimeterCircleCenter.x, curPerimeterCircleCenter.y);
         rotate(PI/4);
-        rect(curPerimeterCircleCenter.x, curPerimeterCircleCenter.y, diameter, diameter);
+        rectMode(CENTER);
+        float side = diameter/1.414f;
+        rect(0, 0, side, side);
        }
        
        popMatrix();
