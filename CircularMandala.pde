@@ -159,6 +159,6 @@ void GenerateLayers()
   {
     float layerRadius = 0.0f;//g_LayerBaseRadii + (g_LayerBaseRadii*layerIter);
     g_Layers.add(new Layer(layerRadius, g_NumIterations, g_LayerColors[layerIter]));
-    g_Layers.get(layerIter).m_AngleBetweenLoops = 0.0f;
+    g_Layers.get(layerIter).m_AngleBetweenLoops = PI;
   }
 }

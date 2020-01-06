@@ -59,15 +59,23 @@ class IEffect
 
 class UnfurlFromCloseEffect extends IEffect
 {
+  float m_InitialAngle;
+  
   UnfurlFromCloseEffect(int frameDuration)
   {
     super(frameDuration);
+    m_InitialAngle = -10000;
   }
   
   void ApplyInternal(Layer layer)
   {
+    if (m_InitialAngle == -10000)
+    {
+      m_InitialAngle = layer.m_AngleBetweenLoops;
+    }
+    
     float completionRatio = GetCompletionRatio();
-    float unfurlAngle = (completionRatio) * layer.GetIdealAngleBetweenLoops();
+    float unfurlAngle = map(completionRatio, 0.0f, 1.0f, m_InitialAngle, layer.GetIdealAngleBetweenLoops());
     layer.m_AngleBetweenLoops = unfurlAngle;
   }
 }
