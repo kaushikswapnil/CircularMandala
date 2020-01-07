@@ -1,7 +1,7 @@
-int g_NumIterations = 6;
-float g_LayerBaseRadii = 45.0f;
-float g_LayerRadiiMultiplier = 1.01f;
-int g_NumLayers = 6;
+int g_NumIterations = 12;
+float g_LayerBaseRadii = 30.0f;
+float g_LayerRadiiMultiplier = 1.02f;
+int g_NumLayers = 8;
 int g_BackgroungAlpha = 20;
 float g_InitialAngleBetweenLoops = PI;
 int g_GeneralLayerShapeMode = 0;
@@ -11,6 +11,7 @@ int g_RotationEffectModeStartFrame = -1;
 int g_RotationEffectModeMinFrameCount = 100;
 int g_StaticTimeStartFrame = -1;
 int g_StaticTimeFrameCount = 10;
+boolean g_Active = false;
 
 ArrayList<Layer> g_Layers;
 
@@ -36,10 +37,19 @@ void setup()
   GenerateLayers();
   
   g_EffectMode = 0;
+  
+  g_Active = false;
+  
+  background(0);
 }
 
 void draw()
 {    
+  if (!g_Active)
+  {
+    return;
+  }
+  
   switch(g_EffectMode)
   {
      case 0:
@@ -75,6 +85,14 @@ void draw()
      default:
      PerformLayerFrame();
      break;
+  }
+}
+
+void keyPressed()
+{
+  if (key == ' ')
+  {
+    g_Active = true;
   }
 }
 
